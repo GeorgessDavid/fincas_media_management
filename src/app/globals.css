@@ -31,3 +31,8 @@
   color: var(--foreground);
   font-family: 'Montserrat', sans-serif !important;
 }
+
+* {
+  font-family: 'Montserrat', sans-serif !important;
+  box-sizing: border-box;
+}
