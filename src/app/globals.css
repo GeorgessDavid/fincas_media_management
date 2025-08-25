@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fefefe;
   --foreground: #171717;
   --titles: #005725;
 }
@@ -29,5 +29,5 @@
  body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif !important;
 }
