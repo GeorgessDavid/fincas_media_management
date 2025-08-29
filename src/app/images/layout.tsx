@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Home - FdA Media Management'
+    title: 'Imágenes - FdA Media Management'
 }
 
-export default function HomeLayout({
+export default function ImagesLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <div>
+        <div className="w-full p-8 flex justify-center flex-col">
             {children}
         </div>
     );

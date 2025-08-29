@@ -28,7 +28,7 @@ export const useLogin = () => {
             setIsLogged(true);
             setSuccess(true);
             setTimeout(() => {
-                router.push('/home');
+                router.push('/images');
             }, 5000);
             toast.success("Inicio de sesión exitoso");
         } catch (err) {
