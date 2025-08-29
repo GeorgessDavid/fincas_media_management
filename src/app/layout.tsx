@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ToastContainer } from 'react-toastify';
+import { Header } from '@/components/index.cjs';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +19,17 @@ export default function RootLayout({
         <link rel="icon" href="/logo.png" />
       </head>
       <body>
+        <ToastContainer position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+        toastStyle={{background: "#212529", minWidth:"400px", maxWidth: "800px", color:"#ffffff"}} />
+        <Header />
         {children}
       </body>
     </html>
