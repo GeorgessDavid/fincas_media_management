@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 export const useLogin = () => {
     const [isLogged, setIsLogged] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const router = useRouter();
 
     const login = (useCallback(async (user: string, password: string) => {
         setLoading(true);
@@ -22,14 +24,17 @@ export const useLogin = () => {
             });
 
             if (!res.ok) throw new Error("Error en la autenticación");
-            
+
             setIsLogged(true);
             setSuccess(true);
+            setTimeout(() => {
+                router.push('/home');
+            }, 5000);
             toast.success("Inicio de sesión exitoso");
         } catch (err) {
             if (err instanceof Error) toast.error(err.message)
             else toast.error("Algo salió mal.");
-        }finally{
+        } finally {
             setLoading(false);
             setTimeout(() => {
                 setSuccess(false);
