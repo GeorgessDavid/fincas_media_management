@@ -8,6 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 export default function Header() {
     return (
         <header className="w-full h-[6vh] flex items-center flex-col">
+            {/* First Header */}
             <div className="bg-[var(--green)] w-full h-full flex justify-between items-center ">
                 <Link href="https://www.fincasdeaconcagua.com.ar/" title="Ir a Fincas de Aconcagua" target="_blank"><Image src="/logo_white.png" className="w-[3rem] h-auto mx-4" alt="Logo" width={100} height={100} /></Link>
                 <div className="flex justify-between w-auto items-center gap-2 mx-4">
