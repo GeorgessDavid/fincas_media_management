@@ -23,6 +23,6 @@
       "components": ["./src/components/index.d.ts"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/hooks/index.cjs"],
   "exclude": ["node_modules"]
 }

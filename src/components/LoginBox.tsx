@@ -5,16 +5,20 @@ import { TextField, Button, InputAdornment, IconButton} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Image from 'next/image';
+import { useLogin } from '@/hooks/index.cjs';
+import { useForm } from 'react-hook-form';
 
 const LoginBox = () => { 
     const [showPassword, setShowPassword] = useState(false);
+
+    const { login, loading, success } = useLogin();
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
 
     return (
-        <div className="w-[35rem] flex flex-col items-center m-4 p-12 gap-4 shadow-[0px_0px_10px_gray] backdrop-blur-xl bg-white/30 rounded">
+        <form className="w-[35rem] flex flex-col items-center m-4 p-12 gap-4 shadow-[0px_0px_10px_gray] backdrop-blur-xl bg-white/30 rounded">
             <Image src="/fincas_cut.svg" alt="Fincas Logo" width={100} height={100} />
             <h1 className="text-xl font-bold text-[var(--titles)]"> Bienvenido al sistema de gestión de medios</h1>
             <span className="text-xs">Debe iniciar sesión para continuar.</span>
@@ -36,8 +40,8 @@ const LoginBox = () => {
                             ),
                         }
                     }}/>
-            <Button variant='contained' color='success' className='w-[12rem]'>Iniciar sesión</Button>
-        </div>
+            <Button variant='contained' color='success' className='w-[12rem]' loading={loading} type="submit" disabled={success}>Iniciar sesión</Button>
+        </form>
     )
 }
 
