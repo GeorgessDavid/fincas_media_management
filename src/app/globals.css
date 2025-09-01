@@ -37,3 +37,17 @@
   font-family: 'Montserrat', sans-serif !important;
   box-sizing: border-box;
 }
+
+.gallery{
+  transition: all 300ms ease-in-out !important;
+}
+
+.gallery img:hover{
+  transform: scale(1.025);
+  z-index: 300;
+}
+
+.gallery:hover > :not(:hover){
+  filter: blur(2px);
+  opacity: 0.75;
+}

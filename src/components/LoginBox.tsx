@@ -5,7 +5,7 @@ import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Image from 'next/image';
-import { useLogin } from '@/hooks/index.cjs';
+import { useLogin } from '@/hooks';
 import { useForm } from 'react-hook-form';
 
 const LoginBox = () => {
