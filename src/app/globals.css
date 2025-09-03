@@ -5,7 +5,8 @@
   --background: #fefefe;
   --foreground: #171717;
   --titles: #005725;
-  --green: #005725
+  --green: #005725;
+  --green-color: #005725;
 }
 
 @theme inline {
@@ -39,10 +40,11 @@
 }
 
 .gallery{
+  overflow: hidden;
   transition: all 300ms ease-in-out !important;
 }
 
-.gallery img:hover{
+.gallery > img:hover{
   transform: scale(1.025);
   z-index: 300;
 }
@@ -50,4 +52,8 @@
 .gallery:hover > :not(:hover){
   filter: blur(2px);
   opacity: 0.75;
+}
+
+.hover_child:hover > button {
+  opacity: 1;
 }
