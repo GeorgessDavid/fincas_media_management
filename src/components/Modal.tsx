@@ -26,8 +26,8 @@ export default function Modal({ title, children, sendAction, open, setOpen }: Mo
                 {children}
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit" form="subscription-form">
+                <Button onClick={handleClose} color="error" variant="outlined">Cancelar</Button>
+                <Button type="submit" form="subscription-form" color="success" variant="outlined">
                     {sendAction}
                 </Button>
             </DialogActions>

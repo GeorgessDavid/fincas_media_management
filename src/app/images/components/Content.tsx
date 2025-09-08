@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useImages } from '@/hooks';
 import AddIcon from '@mui/icons-material/Add';
-import { Image, WrappedButton, Modal } from 'components';
+import { Image, WrappedButton, Modal, DragDrop } from 'components';
 
 export const Content = () => {
   const { images, loading } = useImages();
   const [open, setOpen] = useState(false);
-  
+
 
   return (
     <div>
@@ -33,7 +33,8 @@ export const Content = () => {
         title="Agregar Imagen"
         sendAction="Agregar"
       >
-        <input type="file" />
+        <DragDrop />
+
       </Modal>
     </div>
   );
