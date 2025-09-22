@@ -1,13 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { useImages } from '@/hooks';
+import { useImages, useCreateImage } from '@/hooks';
 import AddIcon from '@mui/icons-material/Add';
 import { Image, WrappedButton, Modal, DragDrop } from 'components';
 
 export const Content = () => {
   const { images, loading } = useImages();
   const [open, setOpen] = useState(false);
+  const { createImage, statusMessage, loading: creating } = useCreateImage();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+
+  const handleSubmit = () => {
+    if (selectedFiles.length === 0) {
+      console.log("No se seleccionaron archivos");
+      return;
+    }
+
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    console.log("Enviando archivos:", selectedFiles);
+    createImage(formData);
+  };
 
 
   return (
@@ -27,15 +45,20 @@ export const Content = () => {
         text="Agregar Imagen"
         onClick={() => setOpen(true)}
       />
-      <Modal
-        open={open}
-        setOpen={setOpen}
-        title="Agregar Imagen"
-        sendAction="Agregar"
-      >
-        <DragDrop />
+      <form id="subscription-form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
 
-      </Modal>
+        <Modal
+          open={open}
+          setOpen={setOpen}
+          title="Agregar Imagen"
+          sendAction="Agregar"
+          status={statusMessage}
+          loading={creating}
+        >
+          <DragDrop onFilesChange={setSelectedFiles} />
+
+        </Modal>
+      </form>
     </div>
   );
 }
