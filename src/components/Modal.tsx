@@ -27,7 +27,7 @@ export default function Modal({ title, children, sendAction, open, setOpen, stat
                 {children}
             </DialogContent>
             <DialogActions>
-                {status && <span className='mr-4 text-sm'>{status}</span>}
+                {status && <span className='m-4 italic text-sm'>{status}</span>}
                 <Button onClick={handleClose} color="error" variant="outlined">Cancelar</Button>
                 <Button type="submit" form="subscription-form" color="success" variant="outlined" loading={loading}>
                     {sendAction}

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Image } from '@/types/images.types';
 
+
 export const useImages = () => {
     const [loading, setloading] = useState(false);
     const [images, setImages] = useState<Image[]>([]);
@@ -40,42 +41,40 @@ export const useCreateImage = () => {
 
     const createImage = useCallback(async (imageData: FormData) => {
         setLoading(true);
-        setStatusMessage('');
+        setStatusMessage('Enviando archivos...');
         setSuccess(null);
+
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/upload`, {
                 method: 'POST',
                 body: imageData,
                 // credentials: 'include',
             });
+
             if (!response.ok) throw new Error('Error al crear la imagen');
+
             const { processId } = await response.json();
             const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL}/images/upload/status/${processId}`);
+
             eventSource.onmessage = (event) => {
+
                 try {
-                    // console.log(event);
-                    const data = JSON.parse(event.data);
-                    console.log(data);
-                    if (data === "end") {
-                        setSuccess(data.data); // acá guardás el objeto Image que vino del back
-                        setStatusMessage("Proceso completado");
-                        eventSource.close();
-                        setLoading(false);
-                    } else if (data.status === "error") {
-                        toast.error(data.message || "Error en el proceso");
-                        eventSource.close();
-                        setLoading(false);
-                    } else {
-                        setStatusMessage(event.data);
-                    }
-                } catch {
+                    console.log(event.data);
                     setStatusMessage(event.data);
+                } catch (error) {
+                    console.error("Error al parsear el mensaje del servidor", error);
                 }
-            } 
-            eventSource.onerror = () => {
+
+                if (event.data === 'Todos los archivos se guardaron exitosamente.') {
+                    eventSource.close();
+                    toast.success('Todos los archivos se guardaron exitosamente.')
+                }
+            }
+
+            eventSource.onerror = (error) => {
+                console.error("Error en la conexión del proceso", error);
                 toast.error("Error en la conexión del proceso");
                 eventSource.close();
-                setLoading(false);
             }
         } catch (error) {
             toast.error((error as Error).message || 'Error al crear la imagen');
@@ -84,7 +83,7 @@ export const useCreateImage = () => {
         }
     }, []);
 
-    useEffect(() => { console.log(statusMessage)},[statusMessage]);
+    useEffect(() => { console.log(statusMessage) }, [statusMessage]);
 
     return { loading, success, statusMessage, createImage };
 }
