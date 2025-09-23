@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useImages, useCreateImage } from '@/hooks';
 import AddIcon from '@mui/icons-material/Add';
 import { Image, WrappedButton, Modal, DragDrop } from 'components';
 
 export const Content = () => {
-  const { images, loading } = useImages();
+  const { images, loading, fetchImages } = useImages();
   const [open, setOpen] = useState(false);
-  const { createImage, statusMessage, loading: creating } = useCreateImage();
+  const { createImage, statusMessage, loading: creating, success } = useCreateImage();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 
@@ -26,6 +26,13 @@ export const Content = () => {
     console.log("Enviando archivos:", selectedFiles);
     createImage(formData);
   };
+
+  useEffect(() => {
+    if (success) setTimeout(() => { 
+      setOpen(false);
+      fetchImages();
+    }, 5000);
+  }, [success])
 
 
   return (
@@ -54,6 +61,7 @@ export const Content = () => {
           sendAction="Agregar"
           status={statusMessage}
           loading={creating}
+          buttonDisabled={success === true}
         >
           <DragDrop onFilesChange={setSelectedFiles} />
 

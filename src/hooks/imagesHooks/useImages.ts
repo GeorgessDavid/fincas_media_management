@@ -12,13 +12,16 @@ export const useImages = () => {
     const fetchImages = useCallback(async () => {
         setloading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images?max=1000`, {
+                method: 'GET',
+                // credentials: 'include',
+            });
             if (!response.ok) {
                 const data = await response.json();
                 throw new Error(data.message || 'Error al cargar las imágenes');
             }
             const data = await response.json();
-
+            console.log(data)
             setImages(data.images);
         } catch (error) {
             toast.error((error as Error).message || 'Error al cargar las imágenes');
@@ -36,7 +39,7 @@ export const useImages = () => {
 
 export const useCreateImage = () => {
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState<Image | null>(null);
+    const [success, setSuccess] = useState<boolean | null>(null);
     const [statusMessage, setStatusMessage] = useState<string>('');
 
     const createImage = useCallback(async (imageData: FormData) => {
@@ -65,9 +68,15 @@ export const useCreateImage = () => {
                     console.error("Error al parsear el mensaje del servidor", error);
                 }
 
-                if (event.data === 'Todos los archivos se guardaron exitosamente.') {
+                if (event.data === 'completed') {
                     eventSource.close();
                     toast.success('Todos los archivos se guardaron exitosamente.')
+                    setStatusMessage('Todos los archivos se guardaron exitosamente.');
+                    setLoading(false);
+                    setSuccess(true);
+                    setTimeout(() => setStatusMessage(''), 5000);
+                    setTimeout(() => setSuccess(null), 5000);
+
                 }
             }
 
@@ -78,12 +87,9 @@ export const useCreateImage = () => {
             }
         } catch (error) {
             toast.error((error as Error).message || 'Error al crear la imagen');
-        } finally {
             setLoading(false);
         }
     }, []);
-
-    useEffect(() => { console.log(statusMessage) }, [statusMessage]);
 
     return { loading, success, statusMessage, createImage };
 }
