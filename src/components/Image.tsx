@@ -5,7 +5,13 @@ import { Backdrop, Tooltip } from '@mui/material';
 import { Modal } from 'components';
 import CloseIcon from '@mui/icons-material/Close';
 
-const Image = ({ alt, srcSet }: {alt: string, srcSet: string}) => {
+interface ImageProps {
+    alt: string;
+    srcSet: string;
+    handleConfirm?: (id: string) => void;
+}
+
+const Image = ({ alt, srcSet, handleConfirm }: ImageProps) => {
     const [open, setOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const handleClose = () => setOpen(false);
@@ -27,7 +33,7 @@ const Image = ({ alt, srcSet }: {alt: string, srcSet: string}) => {
             >
                 <img className="w-auto h-[85vh] object-contain cursor-default filter-none" alt={alt} srcSet={srcSet} />
             </Backdrop>
-            <Modal open={deleteOpen} setOpen={setDeleteOpen} title="Eliminar Imagen" sendAction="Eliminar" >
+            <Modal open={deleteOpen} setOpen={setDeleteOpen} title="Eliminar Imagen" sendAction="Eliminar" onConfirm={handleConfirm || undefined}>
                 <span>¿Estás seguro que deseas eliminar esta imagen?</span>
             </Modal>
         </div>

@@ -27,12 +27,16 @@ export const Content = () => {
     createImage(formData);
   };
 
+  const onDelete = (id: string) => {
+    console.log("Eliminar imagen con id:", id);
+  }
+
   useEffect(() => {
-    if (success) setTimeout(() => { 
+    if (success) setTimeout(() => {
       setOpen(false);
       fetchImages();
     }, 5000);
-  }, [success])
+  }, [success, fetchImages]);
 
 
   return (
@@ -41,7 +45,7 @@ export const Content = () => {
         {!loading &&
           images?.map((image) => (
             <div key={image?.id} className="flex-shrink-0">
-              <Image srcSet={image?.link} alt={image?.title} />
+              <Image srcSet={image?.link} alt={image?.title} handleConfirm={() => onDelete(image?.id)} />
             </div>
           ))
         }
