@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useImages, useCreateImage } from '@/hooks';
+import { useImages, useCreateImage, useDeleteImage } from '@/hooks';
 import AddIcon from '@mui/icons-material/Add';
 import { Image, WrappedButton, Modal, DragDrop } from 'components';
 
@@ -9,6 +9,7 @@ export const Content = () => {
   const { images, loading, fetchImages } = useImages();
   const [open, setOpen] = useState(false);
   const { createImage, statusMessage, loading: creating, success } = useCreateImage();
+  const { deleteImage, loading: deleting, success: deleteSuccess } = useDeleteImage();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
 
@@ -28,7 +29,7 @@ export const Content = () => {
   };
 
   const onDelete = (id: string) => {
-    console.log("Eliminar imagen con id:", id);
+    deleteImage(id);
   }
 
   useEffect(() => {
@@ -37,7 +38,11 @@ export const Content = () => {
       fetchImages();
     }, 5000);
   }, [success, fetchImages]);
-
+  useEffect(() => {
+    if (deleteSuccess) setTimeout(() => {
+      fetchImages();
+    }, 5000);
+  }, [deleteSuccess, fetchImages]);
 
   return (
     <div>
@@ -45,7 +50,7 @@ export const Content = () => {
         {!loading &&
           images?.map((image) => (
             <div key={image?.id} className="flex-shrink-0">
-              <Image srcSet={image?.link} alt={image?.title} handleConfirm={() => onDelete(image?.id)} />
+              <Image srcSet={image?.link} alt={image?.title} handleConfirm={() => onDelete(image?.id)} loading={deleting} buttonDisabled={deleteSuccess} />
             </div>
           ))
         }
@@ -67,7 +72,7 @@ export const Content = () => {
           loading={creating}
           buttonDisabled={success === true}
         >
-          <DragDrop onFilesChange={setSelectedFiles} />
+          <DragDrop onFilesChange={setSelectedFiles} fileType="image/*" />
 
         </Modal>
       </form>

@@ -5,10 +5,11 @@ import { useDropzone } from "react-dropzone";
 import CloseIcon from '@mui/icons-material/Close';
 
 interface DragDropProps {
+  fileType: "image/*" | "video/*";
   onFilesChange?: (files: File[]) => void;
 }
 
-export default function DragAndDrop({ onFilesChange }: DragDropProps) {
+export default function DragAndDrop({ onFilesChange, fileType }: DragDropProps) {
   const [files, setFiles] = useState<File[]>([]);
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -29,7 +30,7 @@ export default function DragAndDrop({ onFilesChange }: DragDropProps) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: { [fileType]: [] },
     multiple: true,
   });
 

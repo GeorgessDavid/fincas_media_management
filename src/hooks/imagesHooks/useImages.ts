@@ -12,7 +12,7 @@ export const useImages = () => {
     const fetchImages = useCallback(async () => {
         setloading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images?max=1000`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images?max=1000&offset=0&recent=true`, {
                 method: 'GET',
                 // credentials: 'include',
             });
@@ -38,7 +38,7 @@ export const useImages = () => {
 }
 
 export const useCreateImage = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean | null>(null);
     const [statusMessage, setStatusMessage] = useState<string>('');
 
@@ -92,4 +92,32 @@ export const useCreateImage = () => {
     }, []);
 
     return { loading, success, statusMessage, createImage };
+}
+
+export const useDeleteImage = () => {
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState<boolean>(false);
+
+    const deleteImage = useCallback(async (id: string) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/delete/${id}`, {
+                method: 'DELETE',
+                // credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error('Error al eliminar la imagen');
+
+            await response.json();
+            toast.success('Imagen eliminada exitosamente.');
+            setSuccess(true);
+            setTimeout(() => setSuccess(false), 5000);
+        } catch (error) {
+            toast.error((error as Error).message || 'Error al eliminar la imagen');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return { loading, success, deleteImage };
 }

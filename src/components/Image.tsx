@@ -9,9 +9,11 @@ interface ImageProps {
     alt: string;
     srcSet: string;
     handleConfirm?: (id: string) => void;
+    loading?: boolean;
+    buttonDisabled?: boolean;
 }
 
-const Image = ({ alt, srcSet, handleConfirm }: ImageProps) => {
+const Image = ({ alt, srcSet, handleConfirm, loading, buttonDisabled }: ImageProps) => {
     const [open, setOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const handleClose = () => setOpen(false);
@@ -33,7 +35,7 @@ const Image = ({ alt, srcSet, handleConfirm }: ImageProps) => {
             >
                 <img className="w-auto h-[85vh] object-contain cursor-default filter-none" alt={alt} srcSet={srcSet} />
             </Backdrop>
-            <Modal open={deleteOpen} setOpen={setDeleteOpen} title="Eliminar Imagen" sendAction="Eliminar" onConfirm={handleConfirm || undefined}>
+            <Modal open={deleteOpen} setOpen={setDeleteOpen} title="Eliminar Imagen" sendAction="Eliminar" onConfirm={handleConfirm || undefined} loading={loading} buttonDisabled={buttonDisabled}> 
                 <span>¿Estás seguro que deseas eliminar esta imagen?</span>
             </Modal>
         </div>
