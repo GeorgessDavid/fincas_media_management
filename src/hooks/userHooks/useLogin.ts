@@ -23,7 +23,10 @@ export const useLogin = () => {
                 body: JSON.stringify({ user, password })
             });
 
-            if (!res.ok) throw new Error("Error en la autenticación");
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || 'Error en el inicio de sesión');
+            }
 
             setIsLogged(true);
             setSuccess(true);
