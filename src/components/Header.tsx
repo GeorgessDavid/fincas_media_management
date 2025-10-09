@@ -4,13 +4,17 @@ import Link from 'next/link';
 import { Chip, Divider, Tooltip, IconButton, Stack } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useState } from 'react';
 import { useLogged } from '@/context/LoggedContext';
+import { useLogout } from '@/hooks';
 import { JSX } from 'react';
+import { Modal } from 'components';
 import ImageIcon from '@mui/icons-material/Image';
 
 
 export default function Header() {
     const { logged, username } = useLogged();
+
     return (
         <header className="w-full flex items-center flex-col sticky top-0 z-50">
             <FirstHeader user={username} logged={logged} />
@@ -20,22 +24,23 @@ export default function Header() {
 }
 
 const FirstHeader = ({ user, logged }: { user: string, logged: boolean }) => {
+    const [logoutOpen, setLogoutOpen] = useState<boolean>(false);
+    const { logout } = useLogout();
     return (
         <div className="bg-[var(--green)] py-3 px-2 w-full flex justify-between items-center ">
-            <Link href="https://www.fincasdeaconcagua.com.ar/" title="Ir a Fincas de Aconcagua" target="_blank"><Image src="/logo_white.png" className="w-[3rem] h-auto mx-4" alt="Logo" width={100} height={100} /></Link>
+            <Tooltip title="Ir a Fincas de Aconcagua" arrow placement="right">
+                <Link href="https://www.fincasdeaconcagua.com.ar/" target="_blank"><Image src="/logo_white.png" className="w-[3rem] h-auto mx-4" alt="Logo" width={100} height={100} /></Link>
+            </Tooltip>
             {logged && <div className="flex justify-between w-auto items-center gap-2 mx-4">
-                <Tooltip title="Click para ver más detalles" arrow>
-                    <Stack direction="row" spacing={1} className="cursor-pointer" sx={{ color: 'white !important' }}>
-                        <Chip clickable icon={<AccountCircleIcon sx={{ color: 'white !important' }} />} label={user} sx={{ color: 'white !important' }} variant="outlined" />
-                    </Stack>
-                </Tooltip>
-                <Divider variant='middle' orientation='vertical' flexItem className='bg-white' />
                 <Tooltip title="Cerrar sesión" arrow>
-                    <IconButton>
+                    <IconButton onClick={() => setLogoutOpen(true)} aria-label="logout">
                         <LogoutIcon className="text-white" />
                     </IconButton>
                 </Tooltip>
             </div>}
+            <Modal title="Cerrar Sesión" sendAction="Cerrar Sesión" open={logoutOpen} setOpen={setLogoutOpen} onConfirm={() => { logout(); setLogoutOpen(false); }} color="primary" >
+                <p>¿Estás seguro que deseas cerrar sesión?</p>
+            </Modal>
         </div>
     )
 }

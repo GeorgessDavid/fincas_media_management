@@ -31,8 +31,8 @@ export const useLogin = () => {
             setIsLogged(true);
             setSuccess(true);
             setTimeout(() => {
-                router.push('/images');
-            }, 5000);
+                router.refresh();
+            }, 2000);
             toast.success("Inicio de sesión exitoso");
         } catch (err) {
             if (err instanceof Error) toast.error(err.message)
@@ -44,6 +44,6 @@ export const useLogin = () => {
             }, 50000);
         }
 
-    }, []))
+    }, [router]))
     return { isLogged, loading, success, login };
 }

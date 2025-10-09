@@ -14,9 +14,10 @@ interface ModalProps {
     loading?: boolean;
     buttonDisabled?: boolean;
     onConfirm?: (id: string) => void;
+    color?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
 }
 
-export default function Modal({ title, children, sendAction, open, setOpen, status, loading, buttonDisabled, onConfirm }: ModalProps) {
+export default function Modal({ title, children, sendAction, open, setOpen, status, loading, buttonDisabled, onConfirm, color = "primary" }: ModalProps) {
 
     const handleClose = () => {
         setOpen(false);
@@ -31,7 +32,7 @@ export default function Modal({ title, children, sendAction, open, setOpen, stat
             <DialogActions>
                 {status && <span className='m-4 italic text-sm'>{status}</span>}
                 <Button onClick={handleClose} color="error" variant="outlined">Cancelar</Button>
-                <Button type={onConfirm ? "button" : "submit"} form="subscription-form" color="success" variant="outlined" loading={loading} disabled={buttonDisabled || loading} onClick={onConfirm ? () => onConfirm("id") : undefined}>
+                <Button type={onConfirm ? "button" : "submit"} form="subscription-form" color={color} variant="outlined" loading={loading} disabled={buttonDisabled || loading} onClick={onConfirm ? () => onConfirm("id") : undefined}>
                     {sendAction}
                 </Button>
             </DialogActions>

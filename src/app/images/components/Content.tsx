@@ -71,6 +71,7 @@ export const Content = () => {
           status={statusMessage}
           loading={creating}
           buttonDisabled={success === true}
+          color="success"
         >
           <DragDrop onFilesChange={setSelectedFiles} fileType="image/*" />
 

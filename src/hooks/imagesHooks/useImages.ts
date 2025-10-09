@@ -14,7 +14,7 @@ export const useImages = () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images?max=1000&offset=0&recent=true`, {
                 method: 'GET',
-                // credentials: 'include',
+                credentials: 'include',
             });
             if (!response.ok) {
                 const data = await response.json();
@@ -51,7 +51,7 @@ export const useCreateImage = () => {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/upload`, {
                 method: 'POST',
                 body: imageData,
-                // credentials: 'include',
+                credentials: 'include'
             });
 
             if (!response.ok) throw new Error('Error al crear la imagen');
@@ -103,7 +103,7 @@ export const useDeleteImage = () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/delete/${id}`, {
                 method: 'DELETE',
-                // credentials: 'include',
+                credentials: 'include',
             });
 
             if (!response.ok) throw new Error('Error al eliminar la imagen');
