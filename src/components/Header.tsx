@@ -1,8 +1,8 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Chip, Divider, Tooltip, IconButton, Stack } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { /* Chip, Divider,  */Tooltip, IconButton, /* Stack */ } from '@mui/material';
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useState } from 'react';
 import { useLogged } from '@/context/LoggedContext';
@@ -13,17 +13,17 @@ import ImageIcon from '@mui/icons-material/Image';
 
 
 export default function Header() {
-    const { logged, username } = useLogged();
+    const { logged } = useLogged();
 
     return (
         <header className="w-full flex items-center flex-col sticky top-0 z-50">
-            <FirstHeader user={username} logged={logged} />
+            <FirstHeader logged={logged} />
             {logged && <SecondHeader />}
         </header>
     );
 }
 
-const FirstHeader = ({ user, logged }: { user: string, logged: boolean }) => {
+const FirstHeader = ({ logged }: { logged: boolean }) => {
     const [logoutOpen, setLogoutOpen] = useState<boolean>(false);
     const { logout } = useLogout();
     return (
