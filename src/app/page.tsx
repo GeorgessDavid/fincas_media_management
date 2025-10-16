@@ -2,6 +2,8 @@ import { LoginBox } from '@/components/index.cjs';
 import { isLogged, getUsername } from '@/middlewares';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const logged = await isLogged();
   const username = await getUsername();

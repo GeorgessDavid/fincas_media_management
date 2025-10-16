@@ -2,6 +2,8 @@
 import ImageIcon from '@mui/icons-material/Image';
 import { Content } from './components/Content';
 
+export const dynamic = 'force-dynamic';
+
 export default function Page() {
     return (
         <div className="flex flex-col">
