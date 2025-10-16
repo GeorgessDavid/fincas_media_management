@@ -17,7 +17,7 @@ export default async function RootLayout({
 }>) {
   let username: string | null = null;
   let logged: boolean = false;
-  let id: string | number = '';
+  const id: string | number = '';
 
   try {
     username = await getUsername();
