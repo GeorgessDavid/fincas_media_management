@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Image } from '@/types/images.types';
-import { uploadImagesWithPresign } from './presignedUpload';
 
 
 export const useImages = () => {
@@ -47,22 +46,6 @@ export const useCreateImage = () => {
         setLoading(true);
         setStatusMessage('Enviando archivos...');
         setSuccess(null);
-
-        // Intento de subida directa a R2 con URL prefirmada (SSE por archivo)
-        try {
-            const done = await uploadImagesWithPresign(imageData, setStatusMessage);
-            if (done) {
-                toast.success('Todos los archivos se guardaron exitosamente.');
-                setStatusMessage('Todos los archivos se guardaron exitosamente.');
-                setLoading(false);
-                setSuccess(true);
-                setTimeout(() => setStatusMessage(''), 5000);
-                setTimeout(() => setSuccess(null), 5000);
-                return; // Evitar fallback si ya se subió por R2
-            }
-        } catch (e) {
-            console.warn('Fallo presignado, uso fallback /images/upload', e);
-        }
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/upload`, {
