@@ -19,6 +19,7 @@
     "@uppy/drag-drop": "^5.0.1",
     "@uppy/react": "^5.0.2",
     "@uppy/xhr-upload": "^5.0.0",
+    "browser-image-compression": "^2.0.2",
     "next": "15.5.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

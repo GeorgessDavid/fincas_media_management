@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import imageCompression from 'browser-image-compression';
 import { Image } from '@/types/images.types';
 
 
@@ -42,15 +43,58 @@ export const useCreateImage = () => {
     const [success, setSuccess] = useState<boolean | null>(null);
     const [statusMessage, setStatusMessage] = useState<string>('');
 
+    const compressImage = async (file: File): Promise<File> => {
+        const options = {
+            maxSizeMB: 4.5,
+            maxWidthOrHeight: 3840,
+            useWebWorker: true,
+            fileType: file.type,
+            initialQuality: 0.9
+        };
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+            return compressedFile;
+        } catch (error) {
+            console.error('Error al comprimir la imagen:', error);
+            throw error;
+        }
+    };
+
     const createImage = useCallback(async (imageData: FormData) => {
         setLoading(true);
-        setStatusMessage('Enviando archivos...');
+        setStatusMessage('Comprimiendo imágenes...');
         setSuccess(null);
 
         try {
+            const files = imageData.getAll('files') as File[];
+            const compressedFormData = new FormData();
+
+            // Comprimir cada imagen
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                if (file.type.startsWith('image/')) {
+                    setStatusMessage(`Comprimiendo imagen ${i + 1} de ${files.length}...`);
+                    const compressedFile = await compressImage(file);
+                    compressedFormData.append('files', compressedFile, file.name);
+                } else {
+                    compressedFormData.append('files', file);
+                }
+            }
+
+            // Copiar otros campos del FormData original
+            for (const [key, value] of imageData.entries()) {
+                if (key !== 'files') {
+                    compressedFormData.append(key, value);
+                }
+            }
+
+            setStatusMessage('Enviando archivos...');
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/images/upload`, {
                 method: 'POST',
-                body: imageData,
+                body: compressedFormData,
                 credentials: 'include'
             });
 
@@ -84,6 +128,7 @@ export const useCreateImage = () => {
                 console.error("Error en la conexión del proceso", error);
                 toast.error("Error en la conexión del proceso");
                 eventSource.close();
+                setLoading(false);
             }
         } catch (error) {
             toast.error((error as Error).message || 'Error al crear la imagen');
