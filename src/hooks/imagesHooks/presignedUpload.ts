@@ -20,24 +20,8 @@ const compressImage = async (file: File): Promise<File> => {
   }
 };
 
-const derivePublicUrl = (uploadUrl: string): string => {
-  try {
-    const u = new URL(uploadUrl);
-    const publicBase = (process.env.NEXT_PUBLIC_R2_PUBLIC_BASE || '').trim();
-    let keyPath = u.pathname;
-    const parts = keyPath.split('/').filter(Boolean);
-    if (parts.length >= 2) {
-      const bucket = parts[0];
-      if (!u.hostname.startsWith(bucket + '.')) {
-        keyPath = '/' + parts.slice(1).join('/');
-      }
-    }
-    if (publicBase) return publicBase.replace(/\/$/, '') + keyPath;
-    return u.origin + keyPath;
-  } catch {
-    return uploadUrl.split('?')[0];
-  }
-};
+// Ya no necesitamos derivar la URL pública en el frontend,
+// el backend se encargará de construirla con MEDIA_URL
 
 export const uploadImagesWithPresign = async (
   imageData: FormData,
@@ -76,8 +60,8 @@ export const uploadImagesWithPresign = async (
       throw new Error(errorData.message || `No se pudo obtener URL prefirmada (${presignRes.status})`);
     }
     
-    const { processId, uploadUrl } = await presignRes.json();
-    const publicUrl = derivePublicUrl(uploadUrl);
+    // El backend ahora devuelve también el 'key' que usaremos para registrar
+    const { processId, uploadUrl, key } = await presignRes.json();
 
     // Conectar al EventSource para seguimiento del proceso (ruta corregida)
     const es = new EventSource(`${apiBase}/images/upload/status/${processId}`);
@@ -118,7 +102,9 @@ export const uploadImagesWithPresign = async (
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ processId, filename: file.name, link: publicUrl })
+            // Enviar el 'key' en lugar del 'link' completo
+            // El backend construirá el link usando MEDIA_URL
+            body: JSON.stringify({ processId, filename: file.name, key })
           });
           
           if (!regRes.ok) {
