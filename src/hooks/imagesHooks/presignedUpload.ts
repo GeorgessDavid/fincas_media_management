@@ -1,4 +1,24 @@
+import imageCompression from 'browser-image-compression';
+
 export type StatusSetter = (msg: string) => void;
+
+const compressImage = async (file: File): Promise<File> => {
+  const options = {
+    maxSizeMB: 4.5,
+    maxWidthOrHeight: 3840,
+    useWebWorker: true,
+    fileType: file.type,
+    initialQuality: 0.9
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error('Error al comprimir la imagen:', error);
+    throw error;
+  }
+};
 
 const derivePublicUrl = (uploadUrl: string): string => {
   try {
@@ -27,18 +47,40 @@ export const uploadImagesWithPresign = async (
   const files = imageData.getAll('files').filter((f): f is File => f instanceof File);
   if (!files.length) return false; // signal caller to fallback
 
-  for (const file of files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    let fileToUpload = file;
+
+    // Comprimir si es imagen
+    if (file.type.startsWith('image/')) {
+      setStatusMessage(`Comprimiendo imagen ${i + 1} de ${files.length}...`);
+      fileToUpload = await compressImage(file);
+    }
+
     setStatusMessage(`Preparando ${file.name}...`);
 
+    // Obtener URL prefirmada con credenciales
     const presignRes = await fetch(
-      `${apiBase}/images/presign?filename=${encodeURIComponent(file.name)}&type=${encodeURIComponent(file.type)}`,
-      { method: 'GET', credentials: 'include' }
+      `${apiBase}/images/presign?filename=${encodeURIComponent(file.name)}&type=${encodeURIComponent(fileToUpload.type)}`,
+      { 
+        method: 'GET', 
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      }
     );
-    if (!presignRes.ok) throw new Error('No se pudo obtener URL prefirmada');
+    
+    if (!presignRes.ok) {
+      const errorData = await presignRes.json().catch(() => ({ message: 'Error desconocido' }));
+      throw new Error(errorData.message || `No se pudo obtener URL prefirmada (${presignRes.status})`);
+    }
+    
     const { processId, uploadUrl } = await presignRes.json();
     const publicUrl = derivePublicUrl(uploadUrl);
 
-    const es = new EventSource(`${apiBase}/images/status/${processId}`);
+    // Conectar al EventSource para seguimiento del proceso (ruta corregida)
+    const es = new EventSource(`${apiBase}/images/upload/status/${processId}`);
 
     await new Promise<void>((resolve, reject) => {
       let closed = false;
@@ -63,8 +105,8 @@ export const uploadImagesWithPresign = async (
           setStatusMessage(`[${file.name}] Subiendo...`);
           const putRes = await fetch(uploadUrl, {
             method: 'PUT',
-            headers: { 'Content-Type': file.type },
-            body: file
+            headers: { 'Content-Type': fileToUpload.type },
+            body: fileToUpload
           });
           if (!putRes.ok) throw new Error(`Fallo en subida (${putRes.status})`);
 
@@ -72,12 +114,20 @@ export const uploadImagesWithPresign = async (
           const regRes = await fetch(`${apiBase}/images/register`, {
             method: 'POST',
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
             body: JSON.stringify({ processId, filename: file.name, link: publicUrl })
           });
-          if (!regRes.ok) throw new Error('Error al registrar la imagen');
+          
+          if (!regRes.ok) {
+            const errorData = await regRes.json().catch(() => ({ message: 'Error desconocido' }));
+            throw new Error(errorData.message || 'Error al registrar la imagen');
+          }
           // wait for SSE 'completed'
         } catch (e) {
+          close();
           reject(e as Error);
         }
       })();
