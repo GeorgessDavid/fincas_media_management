@@ -20,7 +20,7 @@
     "@uppy/react": "^5.0.2",
     "@uppy/xhr-upload": "^5.0.0",
     "browser-image-compression": "^2.0.2",
-    "next": "15.5.0",
+    "next": "15.5.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-dropzone": "^14.3.8",
